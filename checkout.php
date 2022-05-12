@@ -1,27 +1,28 @@
 <?php
 session_start();
-$koneksi= new mysqli("localhost","root","","ylnj-project");
+$koneksi = new mysqli("localhost", "root", "", "webedb");
 
-if(!isset($_SESSION["pelanggan"]))
-{
+if (!isset($_SESSION["pelanggan"])) {
 	echo "<script>alert('Silahkan Login');</script>";
-	echo "<script>location = 'login.php';</script>"; 
+	echo "<script>location = 'login.php';</script>";
 }
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Checkout</title>
 	<link rel="stylesheet" href="admin/assets/css/bootstrap.css">
 </head>
+
 <body>
 
-<?php include 'menu.php'; ?>
+	<?php include 'menu.php'; ?>
 
 
 
-<section class="kontent">
+	<section class="kontent">
 		<div class="container">
 			<h1>Keranjang Belanja</h1>
 			<hr>
@@ -33,34 +34,34 @@ if(!isset($_SESSION["pelanggan"]))
 						<th>Harga</th>
 						<th>Jumlah</th>
 						<th>Subharga</th>
-					
+
 					</tr>
 				</thead>
 				<tbody>
-					<?php $nomor=1; ?>
+					<?php $nomor = 1; ?>
 					<?php $totalbelanja = 0; ?>
-					<?php foreach ($_SESSION["keranjang"] as $id_produk => $jumlah):?> 
-					<!-- Menampilkan yang sedang di perulangkan berdasarkan id produk -->	
-					<?php
-					$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
-					$pecah = $ambil->fetch_assoc();
-					$subharga = $pecah ["harga_produk"]*$jumlah;
-					
-					?>
-					
-					<tr>
-						<td><?php echo $nomor; ?></td>
-						<td><?php echo $pecah["nama_produk"]; ?></td>
-						<td><?php echo number_format($pecah["harga_produk"]);?></td>
-						<td><?php echo $jumlah; ?></td>
-						<td>Rp. <?php echo number_format($subharga); ?></td>
-						
+					<?php foreach ($_SESSION["keranjang"] as $id_produk => $jumlah) : ?>
+						<!-- Menampilkan yang sedang di perulangkan berdasarkan id produk -->
+						<?php
+						$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
+						$pecah = $ambil->fetch_assoc();
+						$subharga = $pecah["harga_produk"] * $jumlah;
 
-					</tr>
-					<?php $nomor++; ?>
-					<?php $totalbelanja+=$subharga; ?>
+						?>
 
-				<?php endforeach ?>
+						<tr>
+							<td><?php echo $nomor; ?></td>
+							<td><?php echo $pecah["nama_produk"]; ?></td>
+							<td><?php echo number_format($pecah["harga_produk"]); ?></td>
+							<td><?php echo $jumlah; ?></td>
+							<td>Rp. <?php echo number_format($subharga); ?></td>
+
+
+						</tr>
+						<?php $nomor++; ?>
+						<?php $totalbelanja += $subharga; ?>
+
+					<?php endforeach ?>
 				</tbody>
 
 				<tfoot>
@@ -70,7 +71,7 @@ if(!isset($_SESSION["pelanggan"]))
 					</tr>
 				</tfoot>
 
-				</table>
+			</table>
 
 
 
@@ -83,7 +84,7 @@ if(!isset($_SESSION["pelanggan"]))
 					</div>
 					<div class="col-md-4">
 						<div class="form-group">
-							<input type="text" readonly value="<?php echo $_SESSION["pelanggan"]['telepon_pelanggan']?>" class="form-control">
+							<input type="text" readonly value="<?php echo $_SESSION["pelanggan"]['telepon_pelanggan'] ?>" class="form-control">
 						</div>
 					</div>
 					<div class="col-md-4">
@@ -91,24 +92,23 @@ if(!isset($_SESSION["pelanggan"]))
 							<option value="">Pilih Ongkos kirim</option>
 							<?php
 							$ambil = $koneksi->query("SELECT * FROM ongkir");
-							while($perongkir = $ambil->fetch_assoc()){
-								?>
-							<option value="<?php echo $perongkir["id_ongkir"]?>"><?php echo $perongkir['nama_kota'] ?>
-								Rp. <?php echo number_format($perongkir['tarif']) ?></option>
+							while ($perongkir = $ambil->fetch_assoc()) {
+							?>
+								<option value="<?php echo $perongkir["id_ongkir"] ?>"><?php echo $perongkir['nama_kota'] ?>
+									Rp. <?php echo number_format($perongkir['tarif']) ?></option>
 							<?php } ?>
-							</select>
-						</div>
+						</select>
+					</div>
 				</div>
 				<div class="form-group">
 					<label>Alamat lengkap pengirim</label>
 					<textarea class="form-control" name="alamat_pengirim" placeholder="masukan alamat lengkap(Kode pos)"></textarea>
-				<button class="btn btn-primary" name="checkout">Checkout</button>
+					<button class="btn btn-primary" name="checkout">Checkout</button>
 
 			</form>
-<?php
+			<?php
 
-			if(isset($_POST["checkout"]))
-			{
+			if (isset($_POST["checkout"])) {
 				$id_pelanggan = $_SESSION["pelanggan"]["id_pelanggan"];
 				$id_ongkir = $_POST["id_ongkir"];
 				$tanggal_pembelian = date("Y-m-d");
@@ -121,41 +121,39 @@ if(!isset($_SESSION["pelanggan"]))
 				$tarif = $arrayongkir['tarif'];
 
 				$total_pembelian = $totalbelanja + $tarif;
-				$koneksi->query("INSERT INTO pembelian (id_pelanggan,id_ongkir,tanggal_pembelian,total_pembelian,nama_kota,tarif,alamat_pengirim)VALUES ('$id_pelanggan','$id_ongkir','$tanggal_pembelian','$total_pembelian','$nama_kota','$tarif','alamat_pengirim')");
+				$koneksi->query("INSERT INTO pembelian (id_pelanggan,id_ongkir,tanggal_pembelian,total_pembelian,nama_kota,tarif,alamt_pengiriman) VALUES ('$id_pelanggan' ,'$id_ongkir','$tanggal_pembelian','$total_pembelian','$nama_kota','$tarif','$alamat_pengirim')");
 
 				$id_pembelian_barusan = $koneksi->insert_id;
-				foreach ($_SESSION["keranjang"] as $id_produk => $jumlah) 
-				{
+				foreach ($_SESSION["keranjang"] as $id_produk => $jumlah) {
 
-					$ambil=$koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
+					$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
 					$perproduk = $ambil->fetch_assoc();
-					$nama=$perproduk['nama_produk'];
-					$harga=$perproduk['harga_produk'];
-					$berat=$perproduk['berat_produk'];
+					$nama = $perproduk['nama_produk'];
+					$harga = $perproduk['harga_produk'];
+					$berat = $perproduk['berat_produk'];
 
-					$subberat = $perproduk['berat_produk']*$jumlah;
-					$subharga = $perproduk['harga_produk']*$jumlah;
+					$subberat = $perproduk['berat_produk'] * $jumlah;
+					$subharga = $perproduk['harga_produk'] * $jumlah;
 
-					$koneksi->query("INSERT INTO pembelian_produk (id_pembelian,i d_produk,nama,harga,berat,subberat,subharga,jumlah) VALUES ('$id_pembelian_barusan','$id_produk','$nama','$harga','$berat','$subberat','$subharga','$jumlah')");
+					$koneksi->query("INSERT INTO pembelian_produk (id_pembelian,id_produk,nama,harga,berat,subberat,subharga,jumlah) VALUES ('$id_pembelian_barusan','$id_produk','$nama','$harga','$berat','$subberat','$subharga','$jumlah')");
 				}
 				unset($_SESSION["keranjang"]);
 
 
 				echo "<script>alert('pembelian sukses');</script>";
-				echo "<script>location = 'nota.php?id=$id_pembelian_barusan';</script>"; 
-				
+				echo "<script>location = 'nota.php?id=$id_pembelian_barusan';</script>";
 			}
 
 			?>
-			
-							
-				
-</div>
 
 
-			
-		</div> 
-		 
+
+		</div>
+
+
+
+		</div>
+
 	</section>
 
 
@@ -163,4 +161,5 @@ if(!isset($_SESSION["pelanggan"]))
 
 
 </body>
+
 </html>

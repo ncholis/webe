@@ -1,2 +1,1 @@
-<?php $koneksi= new mysqli("localhost","root","","ylnj-project");
-?>
+<?php $koneksi= new mysqli("localhost","root","","webedb");

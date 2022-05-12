@@ -1,20 +1,22 @@
 <?php
 session_start();
-$koneksi= new mysqli("localhost","root","","ylnj-project");
+$koneksi = new mysqli("localhost", "root", "", "webedb");
 ?>
- 
+
 
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Login Pelanggan</title>
 	<link rel="stylesheet" href="admin/assets/css/bootstrap.css">
 </head>
+
 <body>
 
 	<?php include 'menu.php'; ?>
 
-			
+
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4">
@@ -39,35 +41,32 @@ $koneksi= new mysqli("localhost","root","","ylnj-project");
 			</div>
 		</div>
 	</div>
-<?php
- 
-if(isset($_POST["login"]))
-{
+	<?php
 
-	$email = $_POST["email"];
-	$password = $_POST["password"];
+	if (isset($_POST["login"])) {
 
-	$ambil = $koneksi->query("SELECT * FROM pelanggan WHERE email_pelanggan='$email' AND password_pelanggan='$password'");
+		$email = $_POST["email"];
+		$password = $_POST["password"];
 
-	$akunyangcocok = $ambil->num_rows;
+		$ambil = $koneksi->query("SELECT * FROM pelanggan WHERE email_pelanggan='$email' AND password_pelanggan='$password'");
 
-	if($akunyangcocok==1)
-	{
-		$akun = $ambil->fetch_assoc();
-		$_SESSION["pelanggan"] = $akun;
-		echo "<script>alert(' Anda sukses login');</script>";
-		echo "<script>location = 'checkout.php';</script>";
+		$akunyangcocok = $ambil->num_rows;
+
+		if ($akunyangcocok == 1) {
+			$akun = $ambil->fetch_assoc();
+			$_SESSION["pelanggan"] = $akun;
+			echo "<script>alert(' Anda sukses login');</script>";
+			echo "<script>location = 'checkout.php';</script>";
+		} else {
+			echo "<script>alert('Anda gagal login, Periksa akun Anda');</script>";
+			echo "<script>location = 'login.php';</script>";
+		}
 	}
-	else
-	{
-		echo "<script>alert('Anda gagal login, Periksa akun Anda');</script>";
-		echo "<script>location = 'login.php';</script>";
-	}
-}
 
-?>
-	
-	
+	?>
+
+
 
 </body>
+
 </html>

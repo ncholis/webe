@@ -4,22 +4,23 @@ session_start();
 
 
 
-$koneksi = new mysqli("localhost","root","","ylnj-project");
+$koneksi = new mysqli("localhost", "root", "", "webedb");
 
-if(empty($_SESSION["keranjang"]) OR !isset($_SESSION["keranjang"]))
-{
+if (empty($_SESSION["keranjang"]) or !isset($_SESSION["keranjang"])) {
 	echo "<script>alert('Keranjang kosong, Silahkan belanja');</script>";
-	echo "<script>location = 'index.php';</script>"; 
+	echo "<script>location = 'index.php';</script>";
 }
 
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Keranjang Belanja</title>
 	<link rel="stylesheet" href="admin/assets/css/bootstrap.css">
 </head>
+
 <body>
 
 	<?php include 'menu.php'; ?>
@@ -42,37 +43,38 @@ if(empty($_SESSION["keranjang"]) OR !isset($_SESSION["keranjang"]))
 					</tr>
 				</thead>
 				<tbody>
-					<?php $nomor=1; ?>
-					<?php foreach ($_SESSION["keranjang"] as $id_produk => $jumlah):?> 
-					<!-- Menampilkan yang sedang di perulangkan berdasarkan id produk -->	
-					<?php
-					$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
-					$pecah = $ambil->fetch_assoc();
-					$subharga = $pecah ["harga_produk"]*$jumlah;
-					
-					?>
-					
-					<tr>
-						<td><?php echo $nomor; ?></td>
-						<td><?php echo $pecah["nama_produk"]; ?></td>
-						<td><?php echo number_format($pecah["harga_produk"]);?></td>
-						<td><?php echo $jumlah; ?></td>
-						<td>Rp. <?php echo number_format($subharga); ?></td>
-						<td>
-							<a href="hapuskeranjang.php?id=<?php echo $id_produk ?>" class="btn btn-danger btn-xs">Hapus</a>
-						</td>
+					<?php $nomor = 1; ?>
+					<?php foreach ($_SESSION["keranjang"] as $id_produk => $jumlah) : ?>
+						<!-- Menampilkan yang sedang di perulangkan berdasarkan id produk -->
+						<?php
+						$ambil = $koneksi->query("SELECT * FROM produk WHERE id_produk='$id_produk'");
+						$pecah = $ambil->fetch_assoc();
+						$subharga = $pecah["harga_produk"] * $jumlah;
 
-					</tr>
-					<?php $nomor++; ?>
-				<?php endforeach ?>
+						?>
+
+						<tr>
+							<td><?php echo $nomor; ?></td>
+							<td><?php echo $pecah["nama_produk"]; ?></td>
+							<td><?php echo number_format($pecah["harga_produk"]); ?></td>
+							<td><?php echo $jumlah; ?></td>
+							<td>Rp. <?php echo number_format($subharga); ?></td>
+							<td>
+								<a href="hapuskeranjang.php?id=<?php echo $id_produk ?>" class="btn btn-danger btn-xs">Hapus</a>
+							</td>
+
+						</tr>
+						<?php $nomor++; ?>
+					<?php endforeach ?>
 				</tbody>
 			</table>
 
 			<a href="index.php" class="btn btn-default">Lanjutkan Belanja</a>
-			<a href="checkout.php" class="btn btn-primary">Checkout</a>	
-		</div> 
-		 
+			<a href="checkout.php" class="btn btn-primary">Checkout</a>
+		</div>
+
 	</section>
 
 </body>
+
 </html>
